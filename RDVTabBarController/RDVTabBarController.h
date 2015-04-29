@@ -52,6 +52,7 @@
  * The index of the view controller associated with the currently selected tab item.
  */
 @property (nonatomic) NSUInteger selectedIndex;
+- (void)setSelectedIndexAnimated:(NSUInteger)selectedIndex;
 
 /**
  * A Boolean value that determines whether the tab bar is hidden.

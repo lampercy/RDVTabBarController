@@ -122,6 +122,39 @@
     [self setNeedsStatusBarAppearanceUpdate];
 }
 
+- (void)setSelectedIndexAnimated:(NSUInteger)selectedIndex {
+    if (selectedIndex >= self.viewControllers.count) {
+        return;
+    }
+    
+    if ([self selectedViewController]) {
+        [[self selectedViewController] willMoveToParentViewController:nil];
+        [[[self selectedViewController] view] removeFromSuperview];
+        [[self selectedViewController] removeFromParentViewController];
+    }
+    
+    _selectedIndex = selectedIndex;
+    [[self tabBar] setSelectedItem:[[self tabBar] items][selectedIndex]];
+    
+    [self setSelectedViewController:[[self viewControllers] objectAtIndex:selectedIndex]];
+    [self addChildViewController:[self selectedViewController]];
+    [[[self selectedViewController] view] setFrame:[[self contentView] bounds]];
+    
+    {
+        CATransition *transition = [CATransition animation];
+        transition.duration = 0.2;
+        transition.type = kCATransitionPush; //choose your animation
+        transition.subtype = kCATransitionFromRight;
+        [[[self selectedViewController] view].layer addAnimation:transition forKey:nil];
+    }
+    
+    [[self contentView] addSubview:[[self selectedViewController] view]];
+    
+    [[self selectedViewController] didMoveToParentViewController:self];
+    
+    [self setNeedsStatusBarAppearanceUpdate];
+}
+
 - (void)setViewControllers:(NSArray *)viewControllers {
     if (_viewControllers && _viewControllers.count) {
         for (UIViewController *viewController in _viewControllers) {
